@@ -13,6 +13,6 @@ class BaseMessage(object):
 
 
 class Heartbeat(BaseMessage):
-    def __init__(self, hostname, microtime, application, level):
+    def __init__(self, hostname, microtime, application, level, message_name="Heartbeat"):
         super(Heartbeat, self).__init__(
-            hostname=hostname, microtime=microtime, application=application, level=level, message_name="Heartbeat")
+            hostname=hostname, microtime=microtime, application=application, level=level, message_name=message_name)

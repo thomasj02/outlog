@@ -11,6 +11,6 @@ setup(
     author="Thomas Johnson",
     author_email="thomas.j.johnson@gmail.com",
     description="Outboard logging motor for Python",
-    requires=['ujson']
+    requires=['ujson', 'pyzmq']
 
 )
