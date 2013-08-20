@@ -9,5 +9,5 @@ setup(
     # metadata for upload to PyPI
     author = "Thomas Johnson",
     author_email = "thomas.j.johnson@gmail.com",
-    description = "This is an Example Package",
+    description = "Outboard logging motor for Python",
 )
