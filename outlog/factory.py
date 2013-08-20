@@ -92,7 +92,7 @@ class ZmqMessageFactory(MessageFactory):
         if not socket:
             raise RuntimeError("OutlogZmqFileMessageFactory requires a zmq socket")
 
-        super(JsonFileMessageFactory, self).__init__(hostname, application, microtime_function)
+        super(ZmqMessageFactory, self).__init__(hostname, application, microtime_function)
         self.socket = socket
 
     def msg(self, message_class, level, **kwargs):
@@ -106,7 +106,7 @@ class ZmqMessageFactory(MessageFactory):
         :rtype: outlog.msgs.BaseMessage
         """
 
-        message = super(JsonFileMessageFactory, self).msg(message_class, level, **kwargs)
+        message = super(ZmqMessageFactory, self).msg(message_class, level, **kwargs)
         ujson_message = ujson.dumps(message)
         self.socket.send(ujson_message, zmq.NOBLOCK, copy=False)
         return message
