@@ -11,3 +11,8 @@ class BaseMessage(object):
     def __repr__(self):
         return "{microtime} {application}.{hostname} {message_name} {level}".format(**self.__dict__)
 
+
+class Heartbeat(BaseMessage):
+    def __init__(self, hostname, microtime, application, level):
+        super(Heartbeat, self).__init__(
+            hostname=hostname, microtime=microtime, application=application, level=level, message_name="Heartbeat")
