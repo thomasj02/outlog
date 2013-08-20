@@ -1,4 +1,5 @@
 import ujson
+import zmq
 
 __author__ = 'tjohnson'
 
@@ -64,3 +65,24 @@ class JsonToOutlogMessageDecoder(object):
         message = message_class(**message_dict)
         return message
 
+class ZmqToOutlogMessageDecoder(object):
+    def __init__(self, socket, json_decoder):
+        """
+        Instantiate a consumer that receives JSON messages via 0MQ and decodes them to outlog messages
+        Note: You must configure the mappings in the json_decoder for this to work properly
+
+        :type socket: zmq.Socket
+        :type json_decoder: JsonToOutlogMessageDecoder
+        :return: A decoded message, or None if no messages are available
+        """
+        self.socket = socket
+        self.json_decoder = json_decoder
+
+    def consume(self):
+        try:
+            json_message = self.socket.recv(flags=zmq.NOBLOCK, copy=True)
+            message = self.json_decoder.consume_json(json_message)
+            return message
+
+        except zmq.Again:
+            return None
