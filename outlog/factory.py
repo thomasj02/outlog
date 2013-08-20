@@ -26,3 +26,4 @@ class OutlogJsonFileMessageFactory(OutlogMessageFactory):
         message = super(OutlogJsonFileMessageFactory, self).msg(message_class, level, **kwargs)
         self.file_handle.write(ujson.dumps(message))
         self.file_handle.write("\n")
+
