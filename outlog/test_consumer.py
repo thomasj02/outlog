@@ -14,9 +14,9 @@ class TestMessage(msgs.BaseMessage):
         self.extra_data = extra_data
 
 
-class TestJsonToOutlogMessageDecoder(TestCase):
+class TestSerializedOutlogMessageDecoder(TestCase):
     def setUp(self):
-        self.sut = consumer.JsonToOutlogMessageDecoder()
+        self.sut = consumer.SerializedOutlogMessageDecoder()
 
     def test_consume_json(self):
         test_message = TestMessage(hostname="host", microtime=123, application="app", level="DEBUG")
@@ -31,7 +31,7 @@ class TestJsonToOutlogMessageDecoder(TestCase):
 
 class TestZmqToOutlogMessageDecoder(TestCase):
     def setUp(self):
-        self.json_decoder = consumer.JsonToOutlogMessageDecoder()
+        self.json_decoder = consumer.SerializedOutlogMessageDecoder()
         self.json_decoder.add_message_to_class_mapping("Test", TestMessage)
 
         self.context = zmq.Context(1)

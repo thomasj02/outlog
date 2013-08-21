@@ -45,24 +45,26 @@ class MessageFactory(object):
             level=level, **kwargs)
 
 
-class JsonFileMessageFactory(MessageFactory):
+class SerializedFileMessageFactory(MessageFactory):
     """
-    A message factory that creates outlog messages and writes them to a file, json-encoded
+    A message factory that creates outlog messages and serializes them to a file
     """
 
-    def __init__(self, hostname, application, microtime_function=get_microtime, file_handle=None):
+    def __init__(self, hostname, application, microtime_function=get_microtime, file_handle=None, serializer=ujson.dumps):
         """
         :param hostname: The name of the host where the log message was generated
         :param application: The name of the application that generated the log message
         :param microtime_function: The function we should call to get the microsecond timestamp
         :param file_handle: A file handle that supports write()
+        :param serializer: The serializer function, which returns the serialized data when given a message
         """
 
         if not file_handle:
-            raise RuntimeError("OutlogJsonFileMessageFactory requires a file handle")
+            raise RuntimeError("SerializedFileMessageFactory requires a file handle")
 
-        super(JsonFileMessageFactory, self).__init__(hostname, application, microtime_function)
+        super(SerializedFileMessageFactory, self).__init__(hostname, application, microtime_function)
         self.file_handle = file_handle
+        self.serializer = serializer
 
     def msg(self, message_class, level, **kwargs):
         """
@@ -74,8 +76,8 @@ class JsonFileMessageFactory(MessageFactory):
         :return: A subclass of outlog.msgs.BaseMessage
         :rtype: outlog.msgs.BaseMessage
         """
-        message = super(JsonFileMessageFactory, self).msg(message_class, level, **kwargs)
-        self.file_handle.write(ujson.dumps(message))
+        message = super(SerializedFileMessageFactory, self).msg(message_class, level, **kwargs)
+        self.file_handle.write(self.serializer(message))
         self.file_handle.write("\n")
         return message
 
@@ -90,7 +92,7 @@ class ZmqMessageFactory(MessageFactory):
         """
 
         if not socket:
-            raise RuntimeError("OutlogZmqFileMessageFactory requires a zmq socket")
+            raise RuntimeError("ZmqFileMessageFactory requires a zmq socket")
 
         super(ZmqMessageFactory, self).__init__(hostname, application, microtime_function)
         self.socket = socket
