@@ -12,7 +12,7 @@ if __name__ == "__main__":
     num_messages = 1000000
     print "Creating %s heartbeat messages" % num_messages
 
-    context = zmq.Context(2)
+    context = zmq.Context(1)
     socket = context.socket(zmq.PUSH)
     socket.connect(sys.argv[1])
 

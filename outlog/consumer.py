@@ -83,7 +83,7 @@ class ZmqToOutlogMessageDecoder(object):
 
     def consume(self):
         try:
-            serialized_message = self.socket.recv(flags=zmq.NOBLOCK, copy=True)
+            serialized_message = self.socket.recv(flags=zmq.NOBLOCK, copy=True)  # copy=True faster for small msgs
             message = self.serialized_decoder.consume_serialized(serialized_message)
             return message
 
