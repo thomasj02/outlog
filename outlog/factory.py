@@ -83,7 +83,7 @@ class SerializedFileMessageFactory(MessageFactory):
 
 
 class ZmqMessageFactory(MessageFactory):
-    def __init__(self, hostname, application, microtime_function=get_microtime, socket=None):
+    def __init__(self, hostname, application, microtime_function=get_microtime, socket=None, serializer=ujson.dumps):
         """
         :param hostname: The name of the host where the log message was generated
         :param application: The name of the application that generated the log message
@@ -96,6 +96,7 @@ class ZmqMessageFactory(MessageFactory):
 
         super(ZmqMessageFactory, self).__init__(hostname, application, microtime_function)
         self.socket = socket
+        self.serializer = serializer
 
     def msg(self, message_class, level, **kwargs):
         """
@@ -109,6 +110,5 @@ class ZmqMessageFactory(MessageFactory):
         """
 
         message = super(ZmqMessageFactory, self).msg(message_class, level, **kwargs)
-        ujson_message = ujson.dumps(message)
-        self.socket.send(ujson_message, zmq.NOBLOCK, copy=False)
+        self.socket.send(self.serializer(message.__dict__), zmq.NOBLOCK, copy=False)
         return message

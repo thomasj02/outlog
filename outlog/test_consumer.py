@@ -23,7 +23,7 @@ class TestSerializedOutlogMessageDecoder(TestCase):
         self.sut.add_message_to_class_mapping("Test", TestMessage)
 
         json_test_message = ujson.dumps(test_message)
-        decoded_message = self.sut.consume_json(json_test_message)
+        decoded_message = self.sut.consume_serialized(json_test_message)
 
         self.assertIsInstance(decoded_message, TestMessage)
         self.assertEqual(test_message.__dict__, decoded_message.__dict__)

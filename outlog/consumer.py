@@ -62,7 +62,7 @@ class SerializedOutlogMessageDecoder(object):
     def add_message_to_class_mapping(self, message_name, class_):
         self.message_names_to_classes[message_name] = class_
 
-    def consume_json(self, serialized_outlog_msg):
+    def consume_serialized(self, serialized_outlog_msg):
         message_dict = self.deserializer(serialized_outlog_msg)
         message_class = self.message_names_to_classes[message_dict["message_name"]]
         message = message_class(**message_dict)
@@ -83,8 +83,8 @@ class ZmqToOutlogMessageDecoder(object):
 
     def consume(self):
         try:
-            json_message = self.socket.recv(flags=zmq.NOBLOCK, copy=True)
-            message = self.serialized_decoder.consume_json(json_message)
+            serialized_message = self.socket.recv(flags=zmq.NOBLOCK, copy=True)
+            message = self.serialized_decoder.consume_serialized(serialized_message)
             return message
 
         except zmq.Again:
