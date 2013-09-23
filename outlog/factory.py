@@ -20,7 +20,7 @@ class MessageFactory(object):
     A message factory that creates and returns Outlog messages
     """
 
-    def __init__(self, hostname, application, microtime_function=get_microtime):
+    def __init__(self, hostname, application, microtime_function=get_microtime, postprocessing_functions=[]):
         """
         :param hostname: The name of the host where the log message was generated
         :param application: The name of the application that generated the log message
@@ -29,6 +29,15 @@ class MessageFactory(object):
         self.hostname = hostname
         self.application = application
         self.microtime_function = microtime_function
+        self.postprocessing_functions = postprocessing_functions
+
+    def _apply_postprocessing(self, message):
+        """
+        You can use postprocessing functions to apply various postprocessing transformations to the message after it
+        gets created but before it gets logged.
+        """
+        for postprocessing_function in self.postprocessing_functions:
+            postprocessing_function(message)
 
     def msg(self, message_class, level, **kwargs):
         """
@@ -40,9 +49,11 @@ class MessageFactory(object):
         :return: A subclass of outlog.msgs.BaseMessage
         :rtype: outlog.msgs.BaseMessage
         """
-        return message_class(
+        message = message_class(
             hostname=self.hostname, microtime=self.microtime_function(), application=self.application,
             level=level, **kwargs)
+        self._apply_postprocessing(message)
+        return message
 
 
 class SerializedFileMessageFactory(MessageFactory):
