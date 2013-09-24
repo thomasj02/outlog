@@ -61,7 +61,13 @@ class SerializedFileMessageFactory(MessageFactory):
     A message factory that creates outlog messages and serializes them to a file
     """
 
-    def __init__(self, hostname, application, microtime_function=get_microtime, file_handle=None, serializer=ujson.dumps):
+    def __init__(self,
+                 hostname,
+                 application,
+                 microtime_function=get_microtime,
+                 file_handle=None,
+                 serializer=ujson.dumps,
+                 postprocessing_functions=[]):
         """
         :param hostname: The name of the host where the log message was generated
         :param application: The name of the application that generated the log message
@@ -73,7 +79,11 @@ class SerializedFileMessageFactory(MessageFactory):
         if not file_handle:
             raise RuntimeError("SerializedFileMessageFactory requires a file handle")
 
-        super(SerializedFileMessageFactory, self).__init__(hostname, application, microtime_function)
+        super(SerializedFileMessageFactory, self).__init__(
+            hostname=hostname,
+            application=application,
+            microtime_function=microtime_function,
+            postprocessing_functions=postprocessing_functions)
         self.file_handle = file_handle
         self.serializer = serializer
 
@@ -94,7 +104,13 @@ class SerializedFileMessageFactory(MessageFactory):
 
 
 class ZmqMessageFactory(MessageFactory):
-    def __init__(self, hostname, application, microtime_function=get_microtime, socket=None, serializer=ujson.dumps):
+    def __init__(self,
+                 hostname,
+                 application,
+                 microtime_function=get_microtime,
+                 socket=None,
+                 serializer=ujson.dumps,
+                 postprocessing_functions=[]):
         """
         :param hostname: The name of the host where the log message was generated
         :param application: The name of the application that generated the log message
@@ -105,7 +121,11 @@ class ZmqMessageFactory(MessageFactory):
         if not socket:
             raise RuntimeError("ZmqFileMessageFactory requires a zmq socket")
 
-        super(ZmqMessageFactory, self).__init__(hostname, application, microtime_function)
+        super(ZmqMessageFactory, self).__init__(
+            hostname=hostname,
+            application=application,
+            microtime_function=microtime_function,
+            postprocessing_functions=postprocessing_functions)
         self.socket = socket
         self.serializer = serializer
 
