@@ -30,6 +30,7 @@ class MessageFactory(object):
         self.application = application
         self.microtime_function = microtime_function
         self.postprocessing_functions = postprocessing_functions
+        self.enabled = True
 
     def _apply_postprocessing(self, message):
         """
@@ -49,6 +50,9 @@ class MessageFactory(object):
         :return: A subclass of outlog.msgs.BaseMessage
         :rtype: outlog.msgs.BaseMessage
         """
+        if not self.enabled:
+            return
+
         message = message_class(
             hostname=self.hostname, microtime=self.microtime_function(), application=self.application,
             level=level, **kwargs)
@@ -97,6 +101,9 @@ class SerializedFileMessageFactory(MessageFactory):
         :return: A subclass of outlog.msgs.BaseMessage
         :rtype: outlog.msgs.BaseMessage
         """
+        if not self.enabled:
+            return
+
         message = super(SerializedFileMessageFactory, self).msg(message_class, level, **kwargs)
         self.file_handle.write(self.serializer(message))
         self.file_handle.write("\n")
@@ -139,6 +146,9 @@ class ZmqMessageFactory(MessageFactory):
         :return: A subclass of outlog.msgs.BaseMessage
         :rtype: outlog.msgs.BaseMessage
         """
+
+        if not self.enabled:
+            return
 
         message = super(ZmqMessageFactory, self).msg(message_class, level, **kwargs)
         self.socket.send(self.serializer(message.__dict__), zmq.NOBLOCK, copy=True)  # copy=True faster for small msgs
