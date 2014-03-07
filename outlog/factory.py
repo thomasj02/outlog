@@ -151,5 +151,5 @@ class ZmqMessageFactory(MessageFactory):
             return
 
         message = super(ZmqMessageFactory, self).msg(message_class, level, **kwargs)
-        self.socket.send(self.serializer(message.__dict__), zmq.NOBLOCK, copy=True)  # copy=True faster for small msgs
+        self.socket.send(self.serializer(message.__dict__), copy=True)  # copy=True faster for small msgs
         return message
